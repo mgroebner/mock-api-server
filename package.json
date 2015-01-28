@@ -1,9 +1,9 @@
 {
   "name": "mock-api-server",
   "description": "Mock out your API server for testing.",
-  "homepage": "https://github.com/maitria/mock-api-server",
+  "homepage": "https://github.com/pepiino/mock-api-server",
   "license": "MIT",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "lib/index.js",
   "bin": {
     "mock-api-server": "bin/mock-api-server"
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/maitria/mock-api-server.git"
+    "url": "git+ssh://git@github.com/pepiino/mock-api-server.git"
   },
   "optionalDependencies": {},
   "engines": { "node": ">=0.8" }
