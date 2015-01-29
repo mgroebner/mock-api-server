@@ -14,4 +14,7 @@ setup:
 test: build
 	./node_modules/.bin/mocha --compilers coffee:coffee-script-redux/register
 
+testdbg: build
+	DEBUG=*,-connect:*,-express:* ./node_modules/.bin/mocha --compilers coffee:coffee-script-redux/register
+
 .PHONY: setup test build
