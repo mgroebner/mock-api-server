@@ -72,6 +72,21 @@ describe 'a mock API server', ->
       assert.equal 200, statusCode
       done()
 
+  it 'allows for modified responses with utf-8 characters without problems', (done) ->
+    options =
+      port: 7003
+
+    configureServer = (server) ->
+      server.respondTo('/v2/hello').with
+        statusCode: 200
+        body:
+          answer: "ěščýíááíýééí, World!"
+
+    doRequest options, configureServer, ({body, statusCode}) ->
+      assert.equal JSON.parse(body).answer, "ěščýíááíýééí, World!"
+      assert.equal 200, statusCode
+      done()
+
   it 'can reset the state', (done) ->
     options =
       port: 7004
