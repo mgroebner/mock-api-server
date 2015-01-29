@@ -1,5 +1,6 @@
 {isObject} = require 'underscore'
 {ResponseSpecification} = require './responder'
+url = require 'url'
 
 class Dsl
   constructor: (@_addResponseSpecification, [@_path]) ->
@@ -17,17 +18,19 @@ class Dsl
       body = what
       statusCode = 200
 
+    {pathname, query} = url.parse @_path, true
+
     spec = switch @_withMode
       when 'replaceContent'
-        path: @_path
+        path: pathname
         method: 'GET'
-        query: {}
+        query: query
         body: body
         statusCode: statusCode
       when 'replaceKey'
-        path: @_path
+        path: pathname
         method: 'GET'
-        query: {}
+        query: query
         replaceKey: @_key
         replaceValue: what
     @_addResponseSpecification spec

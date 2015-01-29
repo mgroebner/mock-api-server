@@ -15,7 +15,7 @@ doRequest = (options, configureServer, testFn) ->
       port: options.port
       hostname: 'localhost'
       method: 'GET'
-      path: '/v2/hello'
+      path: options.path || '/v2/hello'
 
     request = http.request requestOptions, (res) ->
       pageContents = ""
@@ -74,7 +74,7 @@ describe 'a mock API server', ->
 
   it 'allows for modified responses with utf-8 characters without problems', (done) ->
     options =
-      port: 7003
+      port: 7004
 
     configureServer = (server) ->
       server.respondTo('/v2/hello').with
@@ -87,9 +87,25 @@ describe 'a mock API server', ->
       assert.equal 200, statusCode
       done()
 
+  it 'allows for modified responses matching query', (done) ->
+    options =
+      port: 7005
+      path: '/v2/hello?test=1'
+
+    configureServer = (server) ->
+      server.respondTo('/v2/hello?test=1').with
+        statusCode: 200
+        body:
+          answer: "Modified Hello, World!"
+
+    doRequest options, configureServer, ({body, statusCode}) ->
+      assert.equal JSON.parse(body).answer, "Modified Hello, World!"
+      assert.equal 200, statusCode
+      done()
+
   it 'can reset the state', (done) ->
     options =
-      port: 7004
+      port: 7006
 
     configureServer = (server) ->
       server.respondTo('/v2/hello').with
@@ -105,7 +121,7 @@ describe 'a mock API server', ->
 
   it 'supports non-200 responses', (done) ->
     options =
-      port: 7005
+      port: 7007
 
     configureServer = (server) ->
       server.respondTo('/v2/hello').with

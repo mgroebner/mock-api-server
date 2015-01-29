@@ -2,6 +2,7 @@ patternMatcher = require './pattern_matcher'
 {compose, each, extend, filter, identity, map, size, sortBy} = require 'underscore'
 url = require 'url'
 {keyReplacer} = require './manipulations'
+log = (require 'debug')('mockserver:responsespec')
 
 stripExtension = (path) ->
   path.replace /\.json$/, ''
@@ -9,7 +10,7 @@ stripExtension = (path) ->
 class ResponseSpecification
   constructor: (options) ->
     {@method, @path, @query, @body, @statusCode, @changeNumber} = options
-
+    log("new response specification", this)
     @path = stripExtension @path
     @changeNumber ?= 0
 
