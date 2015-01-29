@@ -56,8 +56,9 @@ class Server
     @logger.info '[STARTING-SERVER]'
 
     @app = express()
-    @app.use express.json()
+    @app.use '/static', express.static 'test/mock-api-static'
     @app.use @_cannedResponses
+    @app.use '/mock-api', express.json()
     @app.get '/mock-api/stop', @_stop
     @app.get '/mock-api/reset', @_reset
     @app.post '/mock-api/add-response', @_addResponse

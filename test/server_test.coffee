@@ -3,6 +3,7 @@ http = require 'http'
 MockApi = require '../lib/index.js'
 {readFile, unlink} = require 'fs'
 {extend, findWhere, identity, map, pick} = require 'underscore'
+log = (require 'debug')('log')
 
 doRequest = (options, configureServer, testFn) ->
   apiServerOptions = pick options, 'port', 'logToFile'
@@ -23,7 +24,7 @@ doRequest = (options, configureServer, testFn) ->
         pageContents += chunk
       res.on 'end', ->
         server.stop()
-        testFn {statusCode: res.statusCode, body: pageContents}
+        testFn {statusCode: res.statusCode, body: pageContents }
     request.end()
 
 describe 'a mock API server', ->
@@ -132,4 +133,13 @@ describe 'a mock API server', ->
     doRequest options, configureServer, ({body, statusCode}) ->
       assert.equal JSON.parse(body).answer, "Not Found"
       assert.equal 404, statusCode
+      done()
+
+  it 'can serve static files', (done) ->
+    options =
+      port: 7008
+      path: '/static/image.png'
+
+    doRequest options, identity, ({body, statusCode}) ->
+      assert.equal 200, statusCode
       done()
