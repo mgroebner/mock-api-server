@@ -94,14 +94,22 @@ class Server
         level: 'info'
 
     new lumber.Logger(transports: transports)
- 
+
   _cannedResponses: (req, res, next) =>
     request = pick req, 'method', 'path', 'query'
     @logger.info '[MOCK-REQUEST]', request
     response = @responder.respondTo request
+    if request.method == 'OPTIONS'
+      res.header 'Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization, If-Modified-Since, Cache-Control, Content-Type, Last-Modified'
+      res.header 'Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS'
+      res.header 'Access-Control-Allow-Origin', '*'
+      res.header 'Access-Control-Max-Age', 86400
+      res.status 200
+      return res.send('')
     return next() if response == undefined
     @logger.info '[MOCK-RESPONSE]', response.body
     res.header 'Content-Type', 'application/json'
+    res.header 'Access-Control-Allow-Origin', '*'
     res.status response.statusCode
     res.send JSON.stringify response.body
  
