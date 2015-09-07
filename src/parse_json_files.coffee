@@ -17,8 +17,11 @@ module.exports = (fileHash) ->
       statusCode = parseStatusCode(firstLine)
     else
       statusCode = 200
-
-    body = JSON.parse lines.join("\n")
+    try
+      body = JSON.parse lines.join("\n")
+    catch error
+      throw Error error + '\n while parsing path: ' + path
+    
 
     responseHash[path] = { statusCode, body }
 
