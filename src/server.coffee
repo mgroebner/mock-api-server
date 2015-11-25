@@ -22,8 +22,10 @@ class Server
 
   run: ->
     help = false
-    @options = logToConsole: true
-
+    @options =
+      logToConsole: true
+      apiPath: 'test/mock-api'
+      staticPath: 'test/mock-api-static'
     while @argv.length > 0
       if '--help' == @argv[0]
         help = true
@@ -37,6 +39,12 @@ class Server
       else if '--log-to-file' == @argv[0]
         @argv.shift()
         @options.logToFile = @argv.shift()
+      else if '--api-path' == @argv[0]
+        @argv.shift()
+        @options.apiPath = @argv.shift()
+      else if '--static-path' == @argv[0]
+        @argv.shift()
+        @options.staticPath = @argv.shift()
       else
         console.log 'Unknown option `' + @argv[0] + '` (use --help).'
         process.exit 1
@@ -56,14 +64,14 @@ class Server
     @logger.info '[STARTING-SERVER]'
 
     @app = express()
-    @app.use '/static', express.static 'test/mock-api-static'
+    @app.use '/static', express.static @options.staticPath
     @app.use @_cannedResponses
     @app.use '/mock-api', express.json()
     @app.get '/mock-api/stop', @_stop
     @app.get '/mock-api/reset', @_reset
     @app.post '/mock-api/add-response', @_addResponse
 
-    loadFiles 'test/mock-api', (err, fileHash) =>
+    loadFiles @options.apiPath, (err, fileHash) =>
       @originalResponder = @responder = new Responder parseJsonFiles fileHash
       @server = @app.listen @options.port, done
 
@@ -112,5 +120,5 @@ class Server
     res.header 'Access-Control-Allow-Origin', '*'
     res.status response.statusCode
     res.send JSON.stringify response.body
- 
+
 module.exports = Server
